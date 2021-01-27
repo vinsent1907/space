@@ -12,6 +12,7 @@ public interface ShipService {
     /**
      * Сохраняет корабль
      * @param ship - корабль для сохранения
+     * @return
      */
     Ship saveShip(Ship ship);
 

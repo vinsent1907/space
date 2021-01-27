@@ -6,25 +6,28 @@ import com.space.model.ShipType;
 import com.space.service.ShipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+
 public class ShipController {
 
     private ShipService shipService;
 
-    public ShipController() {
-    }
+//    public ShipController() {
+//    }
 
     @Autowired
     public ShipController(ShipService shipService) {
         this.shipService = shipService;
     }
 
-    @RequestMapping(path = "/rest/ships", method = RequestMethod.GET)
+    @RequestMapping(path = "/rest/ships", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public List<Ship> getAllShips(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "planet", required = false) String planet,
@@ -71,7 +74,7 @@ public class ShipController {
 
     @RequestMapping(path = "/rest/ships", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Ship> createShip(@RequestBody Ship ship) {
+    public ResponseEntity<Ship> createShip(@RequestBody @Validated Ship ship) {
         if (!shipService.isValidShip(ship)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -86,6 +89,8 @@ public class ShipController {
         return new ResponseEntity<>(savedShip, HttpStatus.OK);
     }
 
+
+    //возвращает корабль по id
     @RequestMapping(path = "/rest/ships/{id}", method = RequestMethod.GET)
     public ResponseEntity<Ship> getShip(@PathVariable(value = "id") String pathId) {
         final Long id = convertToLong(pathId);

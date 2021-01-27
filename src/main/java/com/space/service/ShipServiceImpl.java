@@ -16,13 +16,14 @@ import java.util.List;
 
 @Service
 @Transactional
+
 public class ShipServiceImpl implements ShipService {
 
     private ShipRepository shipRepository;
 
-    public ShipServiceImpl() {
-
-    }
+//    public ShipServiceImpl() {
+//
+//    }
 
     @Autowired
     public ShipServiceImpl(ShipRepository shipRepository) {
@@ -76,6 +77,7 @@ public class ShipServiceImpl implements ShipService {
      * @param   maxRating корабля
      * @return - Возвращает List<Ship>
      */
+    //много магии
     @Override
     public List<Ship> getShips(
             String name,
@@ -90,27 +92,26 @@ public class ShipServiceImpl implements ShipService {
             Integer maxCrewSize,
             Double minRating,
             Double maxRating
-    )
-    {
+    ){
          Date afterDate = after == null ? null : new Date(after);
          Date beforeDate = before == null ? null : new Date(before);
          List<Ship> list = new ArrayList<>();
-        shipRepository.findAll().forEach((ship) -> {
-            if (name != null && !ship.getName().contains(name)) return;
-            if (planet != null && !ship.getPlanet().contains(planet)) return;
-            if (shipType != null && ship.getShipType() != shipType) return;
-            if (afterDate != null && ship.getProdDate().before(afterDate)) return;
-            if (beforeDate != null && ship.getProdDate().after(beforeDate)) return;
-            if (isUsed != null && ship.getUsed().booleanValue() != isUsed.booleanValue()) return;
-            if (minSpeed != null && ship.getSpeed().compareTo(minSpeed) < 0) return;
-            if (maxSpeed != null && ship.getSpeed().compareTo(maxSpeed) > 0) return;
-            if (minCrewSize != null && ship.getCrewSize().compareTo(minCrewSize) < 0) return;
-            if (maxCrewSize != null && ship.getCrewSize().compareTo(maxCrewSize) > 0) return;
-            if (minRating != null && ship.getRating().compareTo(minRating) < 0) return;
-            if (maxRating != null && ship.getRating().compareTo(maxRating) > 0) return;
+         shipRepository.findAll().forEach(ship -> {
+             if (name != null && !ship.getName().contains(name)) return;
+             if (planet != null && !ship.getPlanet().contains(planet)) return;
+             if (shipType != null && ship.getShipType() != shipType) return;
+             if (afterDate != null && !ship.getProdDate().after(afterDate)) return;//
+             if (beforeDate != null && !ship.getProdDate().before(beforeDate)) return;//
+             if (isUsed != null && ship.getUsed().booleanValue() != isUsed.booleanValue()) return;
+             if (minSpeed != null && ship.getSpeed().compareTo(minSpeed) < 0) return;
+             if (maxSpeed != null && ship.getSpeed().compareTo(maxSpeed) > 0) return;
+             if (minCrewSize != null && ship.getCrewSize().compareTo(minCrewSize) < 0) return;
+             if (maxCrewSize != null && ship.getCrewSize().compareTo(maxCrewSize) > 0) return;
+             if (minRating != null && ship.getRating().compareTo(minRating) < 0) return;
+             if (maxRating != null && ship.getRating().compareTo(maxRating) > 0) return;
 
-            list.add(ship);
-        });
+             list.add(ship);
+         });
         return list;
     }
 
@@ -118,28 +119,28 @@ public class ShipServiceImpl implements ShipService {
     @Override
     public List<Ship> sortShips(List<Ship> ships, ShipOrder order) {
         if (order != null) {
-            ships.sort((ship1, ship2) -> {
+            ships.sort((s1, s2) -> {
                 switch (order) {
                     case ID:
-                        return ship1.getId().compareTo(ship2.getId());
+                        return s1.getId().compareTo(s2.getId());
                     case SPEED:
-                        return ship1.getSpeed().compareTo(ship2.getSpeed());
-                    case DATE:
-                        return ship1.getProdDate().compareTo(ship2.getProdDate());
+                        return s1.getSpeed().compareTo(s2.getSpeed());
                     case RATING:
-                        return ship1.getRating().compareTo(ship2.getRating());
-                    default: return 0;
+                        return s1.getRating().compareTo(s2.getRating());
+                    default:
+                        return 0;
                 }
             });
+
         }
         return ships;
     }
 
     @Override
     public List<Ship> getPage(List<Ship> ships, Integer pageNumber, Integer pageSize) {
-         Integer page = pageNumber == null ? 0 : pageNumber;
-         Integer size = pageSize == null ? 3 : pageSize;
-         int from = page * size;
+        Integer page = pageNumber == null ? 0 : pageNumber;
+        Integer size = pageSize == null ? 3 : pageSize;
+        int from = page * size;
         int to = from + size;
         if (to > ships.size()) to = ships.size();
         return ships.subList(from, to);
